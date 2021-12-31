@@ -18,7 +18,30 @@ if (process.env.DEV !== "true") {
       next();
     }
     else {
-
+      // if (req.query.uid) {
+      //   myLogin.userExists(req.query.uid, (err, data) => {
+      //     if (err) {
+      //       console.log("Error checking user", err);
+      //       res.status(500).send(err);
+      //     }
+      //     else {
+      //       if (data.length > 0) {
+      //         res.cookie("loggedIn", "true", {
+      //           maxAge: (24 * 60 * 60 * 1000),
+      //           secure: true,
+      //           httpOnly: true,
+      //         });
+      //         next();
+      //       }
+      //       else {
+      //         res.status(401).send("Unauthorized");
+      //       }
+      //     }
+      //   });
+      // }
+      // else {
+      //   res.status(401).send("Unauthorized");
+      // }
     }
   });
 }
