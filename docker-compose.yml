@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  database:
+    build: ./database/
+    environment:
+      MYSQL_ROOT_PASSWORD: moviemakerpass
+      MYSQL_DATABASE: moviemaker
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./data:/var/lib/mysql
+  server:
+    build: ./server/
+    restart: on-failure
+    ports:
+      - "443:3000"
+    depends_on:
+      - "database"
+    environment:
+      WAIT_HOSTS: database:3306
+    command: sh -c "./wait" && npm start"
