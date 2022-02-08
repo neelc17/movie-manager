@@ -4,8 +4,8 @@ services:
   database:
     build: ./database/
     environment:
-      MYSQL_ROOT_PASSWORD: moviemakerpass
-      MYSQL_DATABASE: moviemaker
+      MYSQL_ROOT_PASSWORD: moviemanagerpass
+      MYSQL_DATABASE: moviemanager
     ports:
       - "3308:3306"
     volumes:

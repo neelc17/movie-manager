@@ -1,12 +1,12 @@
 create user 'admin'@'%' identified with mysql_native_password by 'password';
-grant all privileges on moviemaker.* to 'admin'@'%';
+grant all privileges on moviemanager.* to 'admin'@'%';
 flush privileges;
 
 create table if not exists Movies (
   id int auto_increment primary key,
   title varchar(255),
   runtime int,
-  year varchar(255),
+  year varchar(255)
 );
 
 create table if not exists Countries (
@@ -61,7 +61,7 @@ create table if not exists MovieDirector (
 
 create table if not exists Users (
   id int auto_increment primary key,
-  uid varchar(255) unique,
+  uid varchar(255) unique
 );
 create table if not exists UserMovie (
   id int auto_increment primary key,
