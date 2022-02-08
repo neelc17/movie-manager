@@ -7,31 +7,11 @@ const dbConfig = {
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   multipleStatements: true,
-  ssl: {},
+  // ssl: {},
+  connectionLimit: 20,
 };
 
-let db = null;
-const handleDisconnect = () => {
-  db = mysql.createConnection(dbConfig);
-  db.connect((err) => {
-    if (err) {
-      console.log("DB connection error", err, "\nAttempting to reconnect...");
-      setTimeout(handleDisconnect, 100);
-    }
-    else {
-      console.log("DB connection successful");
-    }
-  });
-  db.on("error", (err) => {
-    console.log("DB connection error", err, "\nAttempting to reconnect...");
-    if (err.code === "PROTOCOL_CONNECTION_LOST") {
-      handleDisconnect();
-    }
-    else {
-      throw err;
-    }
-  })
-};
-handleDisconnect();
+let db = mysql.createPool(dbConfig);
+console.log("DB connection pool created");
 
 module.exports = db;
