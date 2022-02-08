@@ -6,6 +6,8 @@ const path = require("path");
 const http = require("http");
 const cookieParser = require("cookie-parser");
 
+const myLogin = require("./backend/routes/login");
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -18,36 +20,47 @@ if (process.env.DEV !== "true") {
       next();
     }
     else {
-      // if (req.query.uid) {
-      //   myLogin.userExists(req.query.uid, (err, data) => {
-      //     if (err) {
-      //       console.log("Error checking user", err);
-      //       res.status(500).send(err);
-      //     }
-      //     else {
-      //       if (data.length > 0) {
-      //         res.cookie("loggedIn", "true", {
-      //           maxAge: (24 * 60 * 60 * 1000),
-      //           secure: true,
-      //           httpOnly: true,
-      //         });
-      //         next();
-      //       }
-      //       else {
-      //         res.status(401).send("Unauthorized");
-      //       }
-      //     }
-      //   });
-      // }
-      // else {
-      //   res.status(401).send("Unauthorized");
-      // }
+      if (req.query.uid) {
+        myLogin.userExists(req.query.uid, (err, data) => {
+          if (err) {
+            console.log("Error checking user", err);
+            res.status(500).send(err);
+          }
+          else {
+            if (data.length > 0) {
+              res.cookie("loggedIn", req.query.uid, {
+                maxAge: (24 * 60 * 60 * 1000),
+                secure: true,
+                httpOnly: true,
+              });
+              next();
+            }
+            else {
+              res.status(401).send("Unauthorized");
+            }
+          }
+        });
+      }
+      else {
+        res.status(401).send("Unauthorized");
+      }
     }
   });
 }
 
+app.use("/api/login", myLogin.router);
 app.get("/api", (req, res) => {
   res.send("Hello world!");
+});
+
+app.get("/api/getformprefill", (req, res) => {
+  res.send({
+    genres: ["Horror", "Drama"],
+    countries: ["USA", "UK", "India"],
+    distComps: ["Warner Bros", "Disney"],
+    prodComps: ["Disney", "Legendary"],
+    directors: ["Roland Emmerich"],
+  });
 });
 
 if (process.env.DEV !== "true") {
