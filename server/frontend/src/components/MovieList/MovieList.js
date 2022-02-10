@@ -1,4 +1,4 @@
-function MovieList() {
+function MovieList(props) {
   return (
     <h1>Movie List</h1>
   );
