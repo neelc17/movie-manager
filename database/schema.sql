@@ -6,57 +6,64 @@ create table if not exists Movies (
   id int auto_increment primary key,
   title varchar(255),
   runtime int,
-  year varchar(255)
-);
-
-create table if not exists Countries (
-  id int auto_increment primary key,
-  name varchar(255)
-);
-create table if not exists MovieCountry (
-  id int auto_increment primary key,
-  movieid int,
-  countryid int
+  year varchar(255),
+  rating varchar(255),
+  unique key (title, runtime, year, rating)
 );
 
 create table if not exists Genres (
   id int auto_increment primary key,
-  name varchar(255)
+  name varchar(255) unique
 );
 create table if not exists MovieGenre (
   id int auto_increment primary key,
   movieid int,
-  countryid int
+  genreid int,
+  unique key (movieid, genreid)
+);
+
+create table if not exists Countries (
+  id int auto_increment primary key,
+  name varchar(255) unique
+);
+create table if not exists MovieCountry (
+  id int auto_increment primary key,
+  movieid int,
+  countryid int,
+  unique key (movieid, countryid)
 );
 
 create table if not exists DistComps (
   id int auto_increment primary key,
-  name varchar(255)
+  name varchar(255) unique
 );
 create table if not exists MovieDist (
   id int auto_increment primary key,
   movieid int,
-  distid int
+  distid int,
+  unique key (movieid, distid)
 );
 
 create table if not exists ProdComps (
   id int auto_increment primary key,
-  name varchar(255)
+  name varchar(255) unique
 );
 create table if not exists MovieProd (
   id int auto_increment primary key,
   movieid int,
-  prodid int
+  prodid int,
+  unique key (movieid, prodid)
 );
 
 create table if not exists Directors (
   id int auto_increment primary key,
-  name varchar(255)
+  name varchar(255) unique
 );
 create table if not exists MovieDirector (
   id int auto_increment primary key,
   movieid int,
-  directorid int
+  directorid int,
+  unique key (movieid, directorid)
 );
 
 create table if not exists Users (
@@ -69,5 +76,6 @@ create table if not exists UserMovie (
   movieid int,
   dates json,
   erate int,
-  orate int
+  orate int,
+  unique key (userid, movieid)
 );
