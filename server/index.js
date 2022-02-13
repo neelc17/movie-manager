@@ -139,6 +139,85 @@ app.post("/api/entermovie", (req, res) => {
   }
 });
 
+app.post("/api/getusermovies", (req, res) => {
+  if (!req.body.uid) {
+    res.status(400).send("No UID provided");
+  }
+  else {
+    db.query(`select * from Movies where id in (select movieid from UserMovie where userid = (select id from Users where uid = "${req.body.uid}"));`, (err, data) => {
+      if (err) {
+        console.log("Error getting movie data", err);
+        res.status(500).send(err);
+      }
+      else {
+        let movies = [];
+        let umquery = "";
+        let resarr = [];
+        for (let i = 0; i < data.length; i++) {
+          movies.push({
+            title: data[i].title,
+            runtime: data[i].runtime,
+            year: data[i].year,
+            rating: data[i].rating,
+          });
+          umquery += `select * from UserMovie where movieid = ${data[i].id} and userid = (select id from Users where uid = "${req.body.uid}");`;
+          resarr.push(i + 1);
+        }
+        if (movies.length === 0) {
+          res.send(movies);
+        }
+        else {
+          db.query(umquery, resarr, (err1, data1) => {
+            if (err1) {
+              console.log("Error getting usermovie data", err1);
+              res.status(500).send(err1);
+            }
+            else {
+              let oquery = "";
+              let resarr1 = [];
+              for (let i = 0; i < movies.length; i++) {
+                if (movies.length > 1) {
+                  movies[i].dates = JSON.parse(data1[i][0].dates).dates;
+                  movies[i].erate = data1[i][0].erate;
+                  movies[i].orate = data1[i][0].orate;
+                }
+                else {
+                  movies[i].dates = JSON.parse(data1[i].dates).dates;
+                  movies[i].erate = data1[i].erate;
+                  movies[i].orate = data1[i].orate;
+                }
+                oquery += `select name from Genres where id in (select genreid from MovieGenre where movieid = ${data[i].id});
+                          select name from Countries where id in (select countryid from MovieCountry where movieid = ${data[i].id});
+                          select name from DistComps where id in (select distid from MovieDist where movieid = ${data[i].id});
+                          select name from ProdComps where id in (select prodid from MovieProd where movieid = ${data[i].id});
+                          select name from Directors where id in (select directorid from MovieDirector where movieid = ${data[i].id});`;
+                for (let j = 1; j <= 5; j++) {
+                  resarr1.push((i * 5) + j);
+                }
+              }
+              db.query(oquery, resarr1, (err2, data2) => {
+                if (err2) {
+                  console.log("Error getting other data", err2);
+                  res.status(500).send(err2);
+                }
+                else {
+                  for (let i = 0; i < movies.length; i++) {
+                    movies[i].other = [];
+                    for (let j = 0; j < 5; j++) {
+                      movies[i].other[j] = data2[(i * 5) + j];
+                    }
+                  }
+                  res.send(movies);
+                }
+              });
+            }
+          });
+        }
+      }
+    })
+  }
+});
+
 if (process.env.DEV !== "true") {
   app.use(express.static(path.join(__dirname, "frontend", "build")));
   app.get("/", (req, res) => {

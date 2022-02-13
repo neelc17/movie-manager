@@ -14,7 +14,7 @@ services:
     build: ./server/
     restart: on-failure
     ports:
-      - "443:3000"
+      - "3000:3000"
     depends_on:
       - "database"
     environment:
